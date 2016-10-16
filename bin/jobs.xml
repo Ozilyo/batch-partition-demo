@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	
+	<bean id="person" class="com.interfac.sb.person.model.Person" scope="prototype" />
+	<bean class="org.springframework.batch.core.scope.StepScope" />
+
+	<bean id="incrementer" class="org.springframework.batch.core.launch.support.RunIdIncrementer"/>
+
+	<batch:job id="partitionJob" job-repository="jobRepository" incrementer="incrementer">
+		<batch:step id="masterStep">
+			<batch:partition step="slave" partitioner="rangePartitioner">
+				<batch:handler grid-size="10" task-executor="taskExecutor" />
+			</batch:partition>
+		</batch:step>
+	</batch:job>
+
+
+
+	<!-- each thread will run this job, with different stepExecutionContext 
+		values. -->
+	<batch:step id="slave">
+		<batch:tasklet >
+			<batch:chunk reader="pagingItemReader" writer="flatFileItemWriter"
+				processor="personItemProcessor" commit-interval="1" />
+		</batch:tasklet>
+	</batch:step>
+
+
+
+	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
+
+
+	<!-- inject stepExecutionContext -->
+	<bean id="personItemProcessor" class="com.interfac.sb.batch.PersonItemProcessor"
+		scope="step">
+		<property name="threadName" value="#{stepExecutionContext['name']}" />
+	</bean>
+
+
+
+	<bean id="pagingItemReader" scope="step"
+		class="org.springframework.batch.item.database.JdbcPagingItemReader">
+		<property name="dataSource" ref="dataSource" />
+		<property name="queryProvider">
+			<bean
+				class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+				<property name="dataSource" ref="dataSource" />
+				<property name="selectClause" value="select id, first_name, last_name" />
+				<property name="fromClause" value="from people" />
+				<property name="whereClause">
+					<value>
+						<![CDATA[where id >= :fromId and id <= :toId]]>
+					</value>
+				</property>
+				<property name="sortKey" value="id" />
+			</bean>
+		</property>
+		<!-- Inject via the ExecutionContext in rangePartitioner -->
+		<property name="parameterValues">
+			<map>
+				<entry key="fromId" value="#{stepExecutionContext['fromId']}" />
+				<entry key="toId" value="#{stepExecutionContext['toId']}" />
+			</map>
+		</property>
+		<property name="pageSize" value="40" />
+		<property name="rowMapper">
+			<bean class="com.interfac.sb.person.mapper.PersonRowMapper" />
+		</property>
+	</bean>
+
+
+
+	<!-- csv file writer -->
+	<bean id="flatFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter"
+		scope="step">
+		<property name="resource"
+			value="file:csv/people#{stepExecutionContext['fromId']}-#{stepExecutionContext['toId']}.csv" />
+		<property name="appendAllowed" value="true" />
+		<property name="lineAggregator">
+			<bean
+				class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="," />
+				<property name="fieldExtractor">
+					<bean
+						class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+						<property name="names" value="id, firstName, lastName" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+</beans>
