@@ -13,6 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
+	manifest.attributes "Main-Class": "com.interfac.sb.Application"
     baseName = 'batch-partition-demo'
     version =  '0.1.0'
 }
@@ -28,4 +29,10 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-batch")
     compile("org.springframework.boot:spring-boot-starter-jdbc")
 	compile('mysql:mysql-connector-java')
+}
+
+
+task copyDepJars(type: Copy){
+	from configurations.compile
+	into 'F:\\sts-workspace\\lib'
 }

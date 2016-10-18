@@ -22,7 +22,7 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person>{
 		
 		String firstName = person.getFirstName().toUpperCase();
 		String lastName = person.getLastName().toUpperCase();
-		int id = person.getId();
+
 		person.setFirstName(firstName);
 		person.setLastName(lastName);
 		
