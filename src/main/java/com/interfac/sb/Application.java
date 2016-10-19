@@ -15,7 +15,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication
 @EnableBatchProcessing
-@ImportResource("classpath:jobs.xml")
+@ImportResource("classpath:launch-context.xml")
 public class Application {
 	
 	
