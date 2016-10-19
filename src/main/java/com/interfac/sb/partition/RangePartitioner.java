@@ -54,4 +54,7 @@ public class RangePartitioner implements Partitioner {
 		return map;
 	}
 
+	public RangePartitioner() {
+	}
+
 }

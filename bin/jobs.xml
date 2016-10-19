@@ -2,9 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<import resource="classpath:quartz-integration.xml"/>
 	
 	<bean id="person" class="com.interfac.sb.person.model.Person" scope="prototype" />
 	<bean class="org.springframework.batch.core.scope.StepScope" />
@@ -94,4 +97,52 @@
 			</bean>
 		</property>
 	</bean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	 <!-- spring batch context -->
+  <bean id="jobRepository"
+	class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+	<property name="transactionManager" ref="transactionManager" />
+  </bean>
+
+  <bean id="transactionManager"
+	class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+
+  <bean id="jobLauncher"
+	class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+	<property name="jobRepository" ref="jobRepository" />
+  </bean>
+
+  <bean
+	class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+	<property name="jobRegistry" ref="jobRegistry" />
+  </bean>
+
+  <bean id="jobRegistry"
+	class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
+  <!-- spring batch context -->
+
+  <bean id="rangePartitioner" class="com.interfac.sb.partition.RangePartitioner"/>
+	
+	
+	
+	
+	
+<!-- 	<context:property-placeholder location="classpath:jdbc.properties"/> -->
+	
+	<bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+       destroy-method="close">
+       <property name="driverClassName" value="${jdbc.driverClassName}"/>
+       <property name="url" value="${jdbc.url}"/>
+       <property name="username" value="${jdbc.username}"/>
+       <property name="password" value="${jdbc.password}"/>
+     </bean>
+	
 </beans>
