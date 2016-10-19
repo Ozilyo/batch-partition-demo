@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-	
-	<import resource="classpath:quartz-integration.xml"/>
-	
-	<bean id="person" class="com.interfac.sb.person.model.Person" scope="prototype" />
+
+	<import resource="classpath:quartz-integration.xml" />
+
+	<bean id="person" class="com.interfac.sb.person.model.Person"
+		scope="prototype" />
 	<bean class="org.springframework.batch.core.scope.StepScope" />
 
-	<bean id="incrementer" class="org.springframework.batch.core.launch.support.RunIdIncrementer"/>
+	<bean id="incrementer"
+		class="org.springframework.batch.core.launch.support.RunIdIncrementer" />
 
-	<batch:job id="partitionJob" job-repository="jobRepository" incrementer="incrementer">
+	<batch:job id="partitionJob" job-repository="jobRepository"
+		incrementer="incrementer">
 		<batch:step id="masterStep">
 			<batch:partition step="slave" partitioner="rangePartitioner">
 				<batch:handler grid-size="10" task-executor="taskExecutor" />
@@ -27,7 +29,7 @@
 	<!-- each thread will run this job, with different stepExecutionContext 
 		values. -->
 	<batch:step id="slave">
-		<batch:tasklet >
+		<batch:tasklet>
 			<batch:chunk reader="pagingItemReader" writer="flatFileItemWriter"
 				processor="personItemProcessor" commit-interval="1" />
 		</batch:tasklet>
@@ -97,52 +99,54 @@
 			</bean>
 		</property>
 	</bean>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	 <!-- spring batch context -->
-<!--   <bean id="jobRepository" -->
-<!-- 	class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean"> -->
-<!-- 	<property name="transactionManager" ref="transactionManager" /> -->
-<!--   </bean> -->
 
-<!--   <bean id="transactionManager" -->
-<!-- 	class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" /> -->
 
-<!--   <bean id="jobLauncher" -->
-<!-- 	class="org.springframework.batch.core.launch.support.SimpleJobLauncher"> -->
-<!-- 	<property name="jobRepository" ref="jobRepository" /> -->
-<!--   </bean> -->
 
-<!--   <bean -->
-<!-- 	class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor"> -->
-<!-- 	<property name="jobRegistry" ref="jobRegistry" /> -->
-<!--   </bean> -->
 
-<!--   <bean id="jobRegistry" -->
-<!-- 	class="org.springframework.batch.core.configuration.support.MapJobRegistry" /> -->
-  <!-- spring batch context -->
 
-<!--   <bean id="rangePartitioner" class="com.interfac.sb.partition.RangePartitioner"/> -->
-	
-	
-	
-	
-	
-<!-- 	<context:property-placeholder location="classpath:jdbc.properties"/> -->
-	
-<!-- 	<bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
-<!--        destroy-method="close"> -->
-<!--        <property name="driverClassName" value="${jdbc.driverClassName}"/> -->
-<!--        <property name="url" value="${jdbc.url}"/> -->
-<!--        <property name="username" value="${jdbc.username}"/> -->
-<!--        <property name="password" value="${jdbc.password}"/> -->
-<!--      </bean> -->
-	
+
+
+
+
+	<!-- spring batch context -->
+<!-- 	<bean id="jobRepository" -->
+<!-- 		class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean"> -->
+<!-- 		<property name="transactionManager" ref="transactionManager" /> -->
+<!-- 	</bean> -->
+
+<!-- 	<bean id="transactionManager" -->
+<!-- 		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" /> -->
+
+<!-- 	<bean id="jobLauncher" -->
+<!-- 		class="org.springframework.batch.core.launch.support.SimpleJobLauncher"> -->
+<!-- 		<property name="jobRepository" ref="jobRepository" /> -->
+<!-- 	</bean> -->
+
+	<bean
+		class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+		<property name="jobRegistry" ref="jobRegistry" />
+	</bean>
+
+<!-- 	<bean id="jobRegistry" -->
+<!-- 		class="org.springframework.batch.core.configuration.support.MapJobRegistry" /> -->
+
+
+	<!-- spring batch context -->
+
+	<!-- <bean id="rangePartitioner" class="com.interfac.sb.partition.RangePartitioner"/> -->
+
+
+
+
+
+	<!-- <context:property-placeholder location="classpath:jdbc.properties"/> -->
+
+	<!-- <bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
+	<!-- destroy-method="close"> -->
+	<!-- <property name="driverClassName" value="${jdbc.driverClassName}"/> -->
+	<!-- <property name="url" value="${jdbc.url}"/> -->
+	<!-- <property name="username" value="${jdbc.username}"/> -->
+	<!-- <property name="password" value="${jdbc.password}"/> -->
+	<!-- </bean> -->
+
 </beans>

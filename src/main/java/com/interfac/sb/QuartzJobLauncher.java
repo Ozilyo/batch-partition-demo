@@ -33,13 +33,13 @@ public class QuartzJobLauncher extends QuartzJobBean {
 	@Autowired
 	private JobLauncher jobLauncher;
 
-//	public void setJobLocator(JobLocator jobLocator) {
-//		this.jobLocator = jobLocator;
-//	}
-//
-//	public void setJobLauncher(JobLauncher jobLauncher) {
-//		this.jobLauncher = jobLauncher;
-//	}
+	public void setJobLocator(JobLocator jobLocator) {
+		this.jobLocator = jobLocator;
+	}
+
+	public void setJobLauncher(JobLauncher jobLauncher) {
+		this.jobLauncher = jobLauncher;
+	}
 
 	@SuppressWarnings("unchecked")
 	protected void executeInternal(JobExecutionContext context) {
