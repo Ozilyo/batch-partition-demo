@@ -23,25 +23,23 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
-@Configuration
-@ComponentScan
-@EnableBatchProcessing
-@ImportResource("classpath:jobs.xml")
+@Component
+// @ImportResource("classpath:jobs.xml")
 public class QuartzJobLauncher extends QuartzJobBean {
 
 	static final String JOB_NAME = "jobName";
+	@Autowired
+	private JobLocator jobLocator;
+	@Autowired
+	private JobLauncher jobLauncher;
 
-	 private JobLocator jobLocator;
-
-	  private JobLauncher jobLauncher;
-
-	  public void setJobLocator(JobLocator jobLocator) {
-		this.jobLocator = jobLocator;
-	  }
-
-	  public void setJobLauncher(JobLauncher jobLauncher) {
-		this.jobLauncher = jobLauncher;
-	  }
+//	public void setJobLocator(JobLocator jobLocator) {
+//		this.jobLocator = jobLocator;
+//	}
+//
+//	public void setJobLauncher(JobLauncher jobLauncher) {
+//		this.jobLauncher = jobLauncher;
+//	}
 
 	@SuppressWarnings("unchecked")
 	protected void executeInternal(JobExecutionContext context) {

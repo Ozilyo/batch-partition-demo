@@ -15,16 +15,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Ali
  *
  */
-//@SpringBootApplication
-//@EnableBatchProcessing
-//@ImportResource("classpath:jobs.xml")
+@SpringBootApplication
+@EnableBatchProcessing
+@ImportResource("classpath:jobs.xml")
 public class Application {
 	
 	public static void main(String[] args) {
-//		SpringApplication.run(QuartzJobLauncher.class, args);
+		SpringApplication.run(Application.class, args);
 		
-		String config = "classpath:jobs.xml";
-
-		ApplicationContext context = new ClassPathXmlApplicationContext(config);
+//		String config = "classpath:jobs.xml";
+//
+//		ApplicationContext context = new ClassPathXmlApplicationContext(config);
 	}
 }
